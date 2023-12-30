@@ -140,18 +140,15 @@
 <main>
 
 
-    <div style="display: flex; flex-direction: row;">
+    <div style="display: flex; flex-direction: row; justify-content:space-around;gap:200px">
         <div id="left">
             <div>{format.big(player.counter)}</div>
             <button on:click={upgradeMult}>increase multiplier</button>
-            <button>upgrade</button>
-            <button>upgrade</button>
+
         </div>
         <div id="right">
             <div>0 clicks</div>
-            <button>upgrade</button>
-            <button>upgrade</button>
-            <button>upgrade</button>
+            <button>click</button>
         </div>
     </div>
 </main>
