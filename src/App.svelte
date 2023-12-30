@@ -127,14 +127,15 @@
     if (value instanceof Decimal) return "D#" + value.toString();
     return value;
 }
-    function save(): string {
+    function save() {
     const savefile = btoa(JSON.stringify(player, saveReplace));
     localStorage.setItem(location.pathname, savefile);
-    return savefile;
 }
 
     //autosaving loop
-    setInterval(save(), 1000);
+    setInterval(() => {
+        save()
+    }, 1000);
 </script>
 <main>
 
