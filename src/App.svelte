@@ -55,8 +55,14 @@
     }    
 
     let player = {
+        upgrades: {
+            upgrademult: {
+                cost: new Decimal(1024),
+                timesBought: Decimal.dZero
+            },
+        },
         mult: Decimal.dTwo,
-        counter: Decimal.dOne,
+        gold: Decimal.dOne,
         time: 1000
     } 
 
@@ -103,7 +109,7 @@
     /**
      * Loads the player save from localStorage, if one exists.
      */
-    export function load(): void {
+     function load(): void {
         const save = localStorage.getItem(location.pathname);
         if (save === null) return;
         deepMerge(
@@ -112,14 +118,110 @@
         );
     }
 
+    
+     type UpgradeName = keyof typeof player.upgrades;
+     const UpgradeNames = Object.keys(player.upgrades) as UpgradeName[];
+
+    /**
+     * @returns Whether or not the given value is the name of one of the
+     * upgrades.
+     */
+     function isUpgradeName(x: unknown): x is UpgradeName {
+        return typeof x === "string" && x in player.upgrades;
+    }
+
+    /**
+     * A utility function to get the current cost of an upgrade.
+     * @param upgradeName The name of the upgrade.
+     * @returns The cost of the given upgrade.
+     */
+     function getUpgradeCost(upgradeName: UpgradeName): Decimal {
+        return player.upgrades[upgradeName].cost;
+    }
+
+    /**
+     * A utility function to change the cost of an upgade.
+     * @param upgradeName The name of the upgrade.
+     * @param newCost The new cost of the given upgrade.
+     */
+     function setUpgradeCost(
+        upgradeName: UpgradeName,
+        newCost: Decimal
+    ): void {
+        player.upgrades[upgradeName].cost = newCost;
+    }
+
+    /**
+     * A utility function to get the current level of an upgrade.
+     * @param upgradeName The name of the upgrade.
+     * @returns The current level of the given upgrade.
+     */
+     function getUpgradeTimesBought(upgradeName: UpgradeName): Decimal {
+        return player.upgrades[upgradeName].timesBought;
+    }
+
+
     load()
 
-    function upgradeMult() {
-        player.mult = player.mult.plus(1)
+
+    
+ const currencyName = {
+    gold: "gold"
+};
+
+type CurrencyName = keyof typeof currencyName;
+
+
+    
+    interface Upgrade {
+    cost: Decimal;
+    currency: CurrencyName;
+    costDiv: string;
+    costFunction?: ((upgradeAmount: Decimal) => Decimal) | null;
+    scaleFunction: (upgradeName: UpgradeName) => void;
+    extra?: VoidFunction;
+    costRounding?: number;
+}
+
+     const upgrades = {
+        upgrademult: {
+            cost: new Decimal(1024),
+            currency: "gold",
+            costDiv: "upgrademultcost",
+            scaleFunction: scalePower(new Decimal(2)),
+        }
+    } as const satisfies Record<string, Upgrade>;
+
+         function scalePower(
+        power: Decimal
+    ): (upgradeName: UpgradeName) => void {
+        return function (upgradeName: UpgradeName): void {
+            setUpgradeCost(
+                upgradeName,
+                getUpgradeCost(upgradeName).pow(power)
+            );
+        };
     }
+
+
+    function buyUpgrade(upgradeName: UpgradeName): void {
+    const upgrade = upgrades[upgradeName];
+    const oldCost = getUpgradeCost(upgradeName);
+
+    if (player[upgrade.currency].gte(oldCost)) {
+        player.upgrades[upgradeName].timesBought = player.upgrades[
+            upgradeName
+        ].timesBought.plus(Decimal.dOne);
+        player[upgrade.currency] = player[upgrade.currency].minus(oldCost);
+        upgrade.scaleFunction(upgradeName);
+        
+    }
+}
+
     // left currency loop
     setInterval(() => {
-        player.counter = player.counter.times(player.mult)
+        player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"))
+        player.gold = player.gold.times(player.mult)
     }, player.time);
 
 
@@ -142,9 +244,9 @@
 
     <div style="display: flex; flex-direction: row; justify-content:space-around;gap:200px">
         <div id="left">
-            <div>{format.big(player.counter)}</div>
-            <button on:click={upgradeMult}>increase multiplier</button>
-
+            <div>{format.big(player.gold)}</div>
+            <button on:click={buyUpgrade("upgrademult")}>increase multiplier</button>
+            <div id="upgrademultcost"></div>
         </div>
         <div id="right">
             <div>0 clicks</div>
