@@ -1,0 +1,27 @@
+@import url('../global.css');
+main {
+    /* text-align: center; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+aside {
+    position: fixed;
+    left: 24px;
+    top: 24px;
+    transition: 0.25s ease-in-out background;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: default;
+}
+aside:hover {
+    background: rgba(255,255,255,0.1)
+}
+aside > * {
+    display: inline;
+}
+button {
+    font-family: inherit;
+}
