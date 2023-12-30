@@ -222,6 +222,7 @@ type CurrencyName = keyof typeof currencyName;
     setInterval(() => {
         player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"))
         player.gold = player.gold.times(player.mult)
+        console.log(getUpgradeCost("upgrademult"))
     }, player.time);
 
 
@@ -246,7 +247,7 @@ type CurrencyName = keyof typeof currencyName;
         <div id="left">
             <div>{format.big(player.gold)}</div>
             <button on:click={buyUpgrade("upgrademult")}>increase multiplier</button>
-            <div id="upgrademultcost"></div>
+            <div>{getUpgradeCost("upgrademult")}</div>
         </div>
         <div id="right">
             <div>0 clicks</div>
