@@ -204,7 +204,7 @@ type CurrencyName = keyof typeof currencyName;
     }
 
 
-    function buyUpgrade(upgradeName: UpgradeName): void {
+    function buyUpgrade(upgradeName: UpgradeName): undefined {
     const upgrade = upgrades[upgradeName];
     const oldCost = getUpgradeCost(upgradeName);
 
@@ -223,6 +223,7 @@ type CurrencyName = keyof typeof currencyName;
         player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"))
         player.gold = player.gold.times(player.mult)
         console.log(getUpgradeCost("upgrademult"))
+        console.log(getUpgradeTimesBought("upgrademult"))
     }, player.time);
 
 
