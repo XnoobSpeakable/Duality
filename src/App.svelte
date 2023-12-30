@@ -218,6 +218,7 @@ type CurrencyName = keyof typeof currencyName;
     }
 }
 
+
     // left currency loop
     setInterval(() => {
         player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"))
