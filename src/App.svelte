@@ -186,7 +186,7 @@
 			player.upgrades[upgradeName].timesBought = player.upgrades[
 				upgradeName
 			].timesBought.plus(Decimal.dOne);
-			player[upgrade.currency] = player[upgrade.currency].minus(oldCost);
+			player[upgrade.currency] = player[upgrade.currency].div(oldCost);
 			upgrade.scaleFunction(upgradeName);
 		}
 	}
