@@ -277,7 +277,9 @@
 
 	let preTime = 0;
 	let postTime = 0;
-	const logicloop = () => {
+	const logicloop = () => { // no fucking clue what this means
+		// seems very smart
+		// i think
 		preTime = player.time;
 		player.time =
 			1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber();
@@ -312,14 +314,21 @@
 			this.lcLoop = setInterval(lcloop, player.time);
 		},
 		restartAutosaveLoop: function () {
-			clearInterval(this.autosaveLoop);
+			clearInterval(this.autosaveLoop); // oh sh*t wait i forgot to set it here lmfao
 			setInterval(saveload.save, 10000);
-		},
+		}, //did u see the logic loop solution i did to  figure out when player.time changes 
 	};
 	loops.restartLogicLoop();
 	loops.restartLCLoop();
 	loops.restartAutosaveLoop();
-	// we need to restart the loop every time `player.time` changes
+	
+	// lmfao
+	setInterval(() => {
+		if (!player.settings.autosaveEnabled) {
+			return;
+		}
+		saveload.save();
+	}, 5000);
 
 	//#endregion
 </script>
