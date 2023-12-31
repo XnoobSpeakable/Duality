@@ -59,6 +59,7 @@
 		mult: Decimal.dTwo,
 		gold: Decimal.dOne,
 		time: 1000,
+		settings: {} // TODO: add settings page
 	};
 
 	//#region Saving/Loading
