@@ -223,7 +223,7 @@
 
 	type CurrencyName = keyof typeof currencyNames;
 
-	// no idea what this is
+	// upgrade scaling function. After buy, raises costs to a power.
 	function scalePower(power: Decimal): (upgradeName: UpgradeName) => void {
 		return function (upgradeName: UpgradeName): void {
 			setUpgradeCost(upgradeName, getUpgradeCost(upgradeName).pow(power));
