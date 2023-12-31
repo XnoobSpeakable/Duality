@@ -162,7 +162,6 @@
 	interface Upgrade {
 		cost: Decimal;
 		currency: CurrencyName;
-		costDiv: string;
 		costFunction?: ((upgradeAmount: Decimal) => Decimal) | null;
 		scaleFunction: (upgradeName: UpgradeName) => void;
 		extra?: VoidFunction;
@@ -173,7 +172,11 @@
 		upgrademult: {
 			cost: new Decimal(1024),
 			currency: "gold",
-			costDiv: "upgrademultcost",
+			scaleFunction: scalePower(new Decimal(2)),
+		},
+        upgradetime: {
+			cost: new Decimal(1e9),
+			currency: "gold",
 			scaleFunction: scalePower(new Decimal(2)),
 		},
 	} as const satisfies Record<string, Upgrade>;

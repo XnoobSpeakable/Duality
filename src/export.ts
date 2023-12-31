@@ -6,6 +6,10 @@ export interface Data {
             cost: Decimal,
             timesBought: Decimal,
         },
+        upgradetime: {
+            cost: Decimal,
+            timesBought: Decimal,
+        },
     },
     mult: Decimal,
     gold: Decimal,
@@ -17,6 +21,10 @@ export const defaultData = {
     upgrades: {
         upgrademult: {
             cost: new Decimal(1024),
+            timesBought: Decimal.dZero,
+        },
+        upgradetime: {
+            cost: new Decimal(1e9),
             timesBought: Decimal.dZero,
         },
     },
