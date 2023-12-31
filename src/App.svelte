@@ -222,18 +222,30 @@
 
 	//#region Initialize
 
-	// left currency loop
-	setInterval(() => {
+	const lcloop = () => {
 		player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"));
 		player.gold = player.gold.times(player.mult);
-		console.log(getUpgradeCost("upgrademult"));
-		console.log(getUpgradeTimesBought("upgrademult"));
-	}, player.time);
+		// console.log(getUpgradeCost("upgrademult"));
+		// console.log(getUpgradeTimesBought("upgrademult"));
+	}
 
-	// autosaving loop
-	setInterval(() => {
-		save();
-	}, 10000);
+	const loops = {
+		lcLoop: 0,
+		autosaveLoop: 0,
+		restartLCLoop: function() {
+			clearInterval(this.lcLoop)
+			this.lcLoop = setInterval(lcloop, player.time)
+		},
+		restartAutosaveLoop: function() {
+			clearInterval(this.autosaveLoop)
+			setInterval(() => {
+				save();
+			}, 10000);
+		}
+	}
+	loops.restartLCLoop();
+	loops.restartAutosaveLoop();
+	// we need to restart the loop every time `player.time` changes
 
 	//#endregion
 </script>
