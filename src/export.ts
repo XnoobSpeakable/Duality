@@ -12,7 +12,7 @@ export interface Upgrade {
     scaleFunction: (upgradeName: UpgradeName) => void;
     extra?: VoidFunction;
     costRounding?: number;
-    timesBought?: Decimal;
+    timesBought: Decimal;
     // wait timesBought is in an upgrade right
     // so why isnt it in the interface
     //well, its in the player data upgrades section but not in the actual upgrades section which hollds the scalefunctions n stuff

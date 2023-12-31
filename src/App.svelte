@@ -210,7 +210,7 @@
 	//#region Utils
 	function clearPlayerData() {
 		localStorage.clear()
-		player = <Data>structuredClone(defaultData)
+		player = <Data>cloneObject(defaultData)
 		location.reload()
 	}
 	/**
