@@ -278,9 +278,9 @@
 	<section>
 		<div id="left">
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
-			<button on:click={() => {buyUpgrade("upgrademult")}}
-				>increase multiplier</button
-			>
+			<button on:click={() => {buyUpgrade("upgrademult")}}>
+                increase multiplier
+            </button>
 			<p>{getUpgradeCost("upgrademult")}</p>
 		</div>
 		<div id="right">
