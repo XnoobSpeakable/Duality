@@ -261,7 +261,7 @@
     let postTime = 0
     const logicloop = () => {
         preTime = player.time
-        player.time = 1000 - getUpgradeTimesBought("upgradetime").toNumber()
+        player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber()
         postTime = player.time
         if(preTime != postTime) {
             loops.restartLCLoop();
