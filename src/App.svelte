@@ -278,11 +278,21 @@
 	<section>
 		<div id="left">
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
-			<button on:click={() => {buyUpgrade("upgrademult")}}>
-                increase multiplier
-            </button>
-			<p>{getUpgradeCost("upgrademult")}</p>
+
+            <div class="upgrade">
+                <button on:click={() => {buyUpgrade("upgrademult")}}>
+                    increase multiplier
+                </button>
+                <p>{getUpgradeCost("upgrademult")}</p>
+            </div>
+			<div  class="upgrade">
+                <button on:click={() => {buyUpgrade("upgradetime")}}>
+                    decrease multiplication delay
+                </button>
+                <p>{getUpgradeCost("upgradetime")}</p>
+            </div>
 		</div>
+
 		<div id="right">
 			<p>0 clicks</p>
 			<button>click</button>
