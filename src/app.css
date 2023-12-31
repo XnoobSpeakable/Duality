@@ -1,3 +1,33 @@
+:root {
+    --bg-color: #1b1b1b;
+    --fg-color: #f1f1f1;
+    /* DO NOT REMOVE THESE I SWEAR THESE ARE HARD TO COME UP WITH */
+    --lbg-color: #efefef;
+    --lfg-color: #101010;
+    --font-family: 
+        'Segoe UI',
+        BlinkMacSystemFont, 
+        Roboto, 
+        Oxygen, 
+        Ubuntu, 
+        Cantarell, 
+        'Open Sans', 
+        system-ui, 
+        -apple-system, 
+        sans-serif
+    ;
+}
+body {
+    font-family: var(--font-family);
+}
+body.dark-theme {
+    background: var(--bg-color);
+    color: var(--fg-color);
+}
+body.light-theme {
+    background: var(--lbg-color);
+    color: var(--lfg-color);
+}
 main {
     display: flex;
     justify-content: center;
