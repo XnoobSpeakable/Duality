@@ -233,7 +233,7 @@
 	// autosaving loop
 	setInterval(() => {
 		save();
-	}, 1000);
+	}, 10000);
 
 	//#endregion
 </script>
