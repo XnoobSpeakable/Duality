@@ -336,26 +336,19 @@
 		<div id="left">
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
 
+            <div class="upgrade">
+                <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
+                    increase multiplier
+                </button>
+                <p>Cost: {upgrader.getUpgradeCost("upgrademult")} {upgrades.upgrademult.currency}</p>
+            </div>
+            <br>
 			<div class="upgrade">
-				<button
-					on:click={() => {
-						upgrader.buyUpgrade("upgrademult");
-					}}
-				>
-					increase multiplier
-				</button>
-				<p>{upgrader.getUpgradeCost("upgrademult")}</p>
-			</div>
-			<div class="upgrade">
-				<button
-					on:click={() => {
-						upgrader.buyUpgrade("upgradetime");
-					}}
-				>
-					decrease multiplication delay
-				</button>
-				<p>{upgrader.getUpgradeCost("upgradetime")}</p>
-			</div>
+                <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
+                    decrease multiplication delay
+                </button>
+                <p>Cost: {upgrader.getUpgradeCost("upgradetime")} {upgrades.upgradetime.currency}</p>
+            </div>
 		</div>
 
 		<div id="right">
