@@ -321,13 +321,14 @@
                 <button on:click={() => {buyUpgrade("upgrademult")}}>
                     increase multiplier
                 </button>
-                <p>{getUpgradeCost("upgrademult")}</p>
+                <p>Cost: {getUpgradeCost("upgrademult")} {upgrades.upgrademult.currency}</p>
             </div>
-			<div  class="upgrade">
+            <br>
+			<div class="upgrade">
                 <button on:click={() => {buyUpgrade("upgradetime")}}>
                     decrease multiplication delay
                 </button>
-                <p>{getUpgradeCost("upgradetime")}</p>
+                <p>Cost: {getUpgradeCost("upgradetime")} {upgrades.upgradetime.currency}</p>
             </div>
 		</div>
 
