@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "./app.css";
 	import Decimal from "break_eternity.js";
-    import { defaultData, type Data } from "./export";
+    import { defaultData, type Data, type UpgradeName, type Upgrade, currencyNames } from "./export";
 
 	const format = {
 		decimalPlaces: function (
@@ -121,8 +121,6 @@
 	//#endregion
 
 	//#region Upgrades
-	type UpgradeName = keyof typeof player.upgrades;
-	const UpgradeNames = Object.keys(player.upgrades) as UpgradeName[];
 
 	/**
 	 * @returns Whether or not the given value is the name of one of the
@@ -159,15 +157,6 @@
 		return player.upgrades[upgradeName].timesBought;
 	}
 
-	interface Upgrade {
-		cost: Decimal;
-		currency: CurrencyName;
-		costFunction?: ((upgradeAmount: Decimal) => Decimal) | null;
-		scaleFunction: (upgradeName: UpgradeName) => void;
-		extra?: VoidFunction;
-		costRounding?: number;
-	}
-
 	const upgrades = {
 		upgrademult: {
 			cost: new Decimal(1024),
@@ -177,11 +166,34 @@
         upgradetime: {
 			cost: new Decimal(1e9),
 			currency: "gold",
-			scaleFunction: scalePower(new Decimal(2)),
+			scaleFunction: scaleLimited(new Decimal(3), 9), // TODO: change scaling function
 		},
 	} as const satisfies Record<string, Upgrade>;
-
-	function buyUpgrade(upgradeName: UpgradeName): undefined {
+    // yo how do we switch to costFunction instead of scaleFunction
+	// oh
+	// waait wait what are you trying to do
+    // instead of having a seperate scaleFunction that we call on each buy, 
+	// we wanna have a costFunction built into the upgrade object that computes cost based on 
+	// total upgrades you bought instead of executing something on EACH buy. 
+	// Then we will need ot call it on each buy but it works better cuz its a proper formula
+	// explain why it works better
+    // @jakub :skull:
+	// bruv
+	// jakub is silly sometimes
+	// he does stuff and calls it "better"
+	// and refuses to elaborate
+	// why its better
+	// i think its already good tho
+    // lets leave these comments, i wonder what jakub will think 
+	// sure
+	// okay so what now
+    // i need to implement the damn logic for the damn second upgrade (damn)
+	// damn bro
+	// i already did some stuff for you
+    // theres a shit ton of stuff here (also will i need to add each upgrade to the upgrade interface thing manually)
+	// wdym "upgrade interface"
+    // follow me ok
+	function buyUpgrade(upgradeName: UpgradeName): void {
 		const upgrade = upgrades[upgradeName];
 		const oldCost = getUpgradeCost(upgradeName);
 
@@ -220,16 +232,21 @@
 
 	load();
 
-	const currencyNames = {
-		gold: "gold",
-	};
-
-	type CurrencyName = keyof typeof currencyNames;
-
 	// upgrade scaling function. After buy, raises costs to a power.
 	function scalePower(power: Decimal): (upgradeName: UpgradeName) => void {
 		return function (upgradeName: UpgradeName): void {
 			setUpgradeCost(upgradeName, getUpgradeCost(upgradeName).pow(power));
+		};
+	}
+
+    function scaleLimited(power: Decimal, maxBuys: number): (upgradeName: UpgradeName) => void {
+		return function (upgradeName: UpgradeName): void {
+            if(getUpgradeTimesBought(upgradeName).lte(maxBuys)) {
+                setUpgradeCost(upgradeName, getUpgradeCost(upgradeName).pow(power));
+            }
+            else {
+                setUpgradeCost(upgradeName, Decimal.dInf);
+            }
 		};
 	}
 
@@ -238,6 +255,10 @@
 	//#region Initialize
 
 	// console.debug(structuredClone(defaultData), defaultData)
+
+    const logicloop = () => {
+        console.log("test")
+	}
 
 	const lcloop = () => {
 		if (player.gold.lessThan(Decimal.dOne)) {
@@ -250,8 +271,13 @@
 	}
 
 	const loops = {
+        logicLoop: 0,
 		lcLoop: 0,
 		autosaveLoop: 0,
+        restartLogicLoop: function() {
+			clearInterval(this.logicLoop)
+			this.logicLoop = setInterval(logicloop, 100)
+		},
 		restartLCLoop: function() {
 			clearInterval(this.lcLoop)
 			this.lcLoop = setInterval(lcloop, player.time)
@@ -263,6 +289,7 @@
 			}, 10000);
 		}
 	}
+    loops.restartLogicLoop();
 	loops.restartLCLoop();
 	loops.restartAutosaveLoop();
 	// we need to restart the loop every time `player.time` changes
