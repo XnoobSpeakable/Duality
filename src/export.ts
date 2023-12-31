@@ -21,7 +21,7 @@ export interface Data { // ho i frotgo lhod no
     upgrades: Record<string, Upgrade>,
     mult: Decimal,
     gold: Decimal,
-    time: 1000,
+    time: number,
     settings: object
 }
 
