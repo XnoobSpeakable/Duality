@@ -1,7 +1,13 @@
 <script lang="ts">
 	import "./app.css";
 	import Decimal from "break_eternity.js";
-    import { defaultData, type Data, type UpgradeName, type Upgrade, currencyNames } from "./export";
+	import {
+		defaultData,
+		type Data,
+		type UpgradeName,
+		type Upgrade,
+		currencyNames,
+	} from "./export";
 
 	const format = {
 		decimalPlaces: function (
@@ -63,7 +69,7 @@
 		 * A utility function used when deserializing the player object, used to
 		 * handle Decimal values.
 		 */
-		deserializeDecimal: function(_key: string, value: unknown): unknown {
+		deserializeDecimal: function (_key: string, value: unknown): unknown {
 			return typeof value === "string" && value.startsWith("D#")
 				? new Decimal(value.slice(2))
 				: value;
@@ -74,7 +80,7 @@
 		 * other object.
 		 * @param data The object from which to copy property values.
 		 */
-		 mergeRecursive: function<T extends object>(source: T, data: T): void {
+		mergeRecursive: function <T extends object>(source: T, data: T): void {
 			for (const key in data) {
 				const value = data[key];
 				if (
@@ -96,7 +102,7 @@
 		/**
 		 * Loads the player save from localStorage, if one exists.
 		 */
-		load: function(): void {
+		load: function (): void {
 			const save = localStorage.getItem(location.pathname);
 			if (save === null) return;
 			this.mergeRecursive(
@@ -107,17 +113,15 @@
 				),
 			);
 		},
-		saveReplace: function(_key: string, value: unknown): unknown {
+		saveReplace: function (_key: string, value: unknown): unknown {
 			if (value instanceof Decimal) return "D#" + value.toString();
 			return value;
 		},
-		save: function() {
+		save: function () {
 			const savefile = btoa(JSON.stringify(player, this.saveReplace));
 			localStorage.setItem(location.pathname, savefile);
-		}
-	}
-
-	
+		},
+	};
 
 	//#endregion
 
@@ -128,7 +132,7 @@
 		 * @returns Whether or not the given value is the name of one of the
 		 * upgrades.
 		 */
-		isUpgradeName: function(x: unknown): x is UpgradeName {
+		isUpgradeName: function (x: unknown): x is UpgradeName {
 			return typeof x === "string" && x in player.upgrades;
 		},
 		/**
@@ -136,7 +140,7 @@
 		 * @param upgradeName The name of the upgrade.
 		 * @returns The cost of the given upgrade.
 		 */
-		getUpgradeCost: function(upgradeName: UpgradeName): Decimal {
+		getUpgradeCost: function (upgradeName: UpgradeName): Decimal {
 			return player.upgrades[upgradeName].cost;
 		},
 		/**
@@ -144,7 +148,10 @@
 		 * @param upgradeName The name of the upgrade.
 		 * @param newCost The new cost of the given upgrade.
 		 */
-		setUpgradeCost: function(upgradeName: UpgradeName, newCost: Decimal): void {
+		setUpgradeCost: function (
+			upgradeName: UpgradeName,
+			newCost: Decimal,
+		): void {
 			player.upgrades[upgradeName].cost = newCost;
 		},
 		/**
@@ -152,10 +159,10 @@
 		 * @param upgradeName The name of the upgrade.
 		 * @returns The current level of the given upgrade.
 		 */
-		getUpgradeTimesBought: function(upgradeName: UpgradeName): Decimal {
+		getUpgradeTimesBought: function (upgradeName: UpgradeName): Decimal {
 			return player.upgrades[upgradeName].timesBought;
 		},
-		buyUpgrade: function(upgradeName: UpgradeName): void {
+		buyUpgrade: function (upgradeName: UpgradeName): void {
 			const upgrade = upgrades[upgradeName];
 			const oldCost = this.getUpgradeCost(upgradeName);
 
@@ -163,74 +170,85 @@
 				player.upgrades[upgradeName].timesBought = player.upgrades[
 					upgradeName
 				].timesBought.plus(Decimal.dOne);
-				player[upgrade.currency] = player[upgrade.currency].div(oldCost);
+				player[upgrade.currency] =
+					player[upgrade.currency].div(oldCost);
 				upgrade.scaleFunction(upgradeName);
 			}
 		},
 		// upgrade scaling function. After buy, raises costs to a power.
-		scalePower: function(power: Decimal): (upgradeName: UpgradeName) => void {
+		scalePower: function (
+			power: Decimal,
+		): (upgradeName: UpgradeName) => void {
 			return function (upgradeName: UpgradeName): void {
-				upgrader.setUpgradeCost(upgradeName, upgrader.getUpgradeCost(upgradeName).pow(power));
+				upgrader.setUpgradeCost(
+					upgradeName,
+					upgrader.getUpgradeCost(upgradeName).pow(power),
+				);
 			};
 		},
-		scaleLimited: function (power: Decimal, maxBuys: number): (upgradeName: UpgradeName) => void {
+		scaleLimited: function (
+			power: Decimal,
+			maxBuys: number,
+		): (upgradeName: UpgradeName) => void {
 			return function (upgradeName: UpgradeName): void {
-				if(upgrader.getUpgradeTimesBought(upgradeName).lte(maxBuys)) {
-					upgrader.setUpgradeCost(upgradeName, upgrader.getUpgradeCost(upgradeName).pow(power));
-				}
-				else {
+				if (upgrader.getUpgradeTimesBought(upgradeName).lte(maxBuys)) {
+					upgrader.setUpgradeCost(
+						upgradeName,
+						upgrader.getUpgradeCost(upgradeName).pow(power),
+					);
+				} else {
 					upgrader.setUpgradeCost(upgradeName, Decimal.dInf);
 				}
 			};
-		}
-	}
+		},
+	};
 
 	const upgrades = {
 		upgrademult: {
 			cost: new Decimal(1024),
 			currency: "gold",
 			scaleFunction: upgrader.scalePower(new Decimal(2)),
-			timesBought: Decimal.dZero
+			timesBought: Decimal.dZero,
 		},
-        upgradetime: {
+		upgradetime: {
 			cost: new Decimal(1e9),
 			currency: "gold",
 			scaleFunction: upgrader.scaleLimited(new Decimal(3), 9),
-			timesBought: Decimal.dZero 
+			timesBought: Decimal.dZero,
 		},
 	} as const satisfies Record<string, Upgrade>;
-    // yo how do we switch to costFunction instead of scaleFunction
+	// yo how do we switch to costFunction instead of scaleFunction
 	// oh
 	// waait wait what are you trying to do
-    // instead of having a seperate scaleFunction that we call on each buy, 
-	// we wanna have a costFunction built into the upgrade object that computes cost based on 
-	// total upgrades you bought instead of executing something on EACH buy. 
+	// instead of having a seperate scaleFunction that we call on each buy,
+	// we wanna have a costFunction built into the upgrade object that computes cost based on
+	// total upgrades you bought instead of executing something on EACH buy.
 	// Then we will need ot call it on each buy but it works better cuz its a proper formula
 	// explain why it works better
-    // @jakub :skull:
+	// @jakub :skull:
 	// bruv
 	// jakub is silly sometimes
 	// he does stuff and calls it "better"
 	// and refuses to elaborate
 	// why its better
 	// i think its already good tho
-    // lets leave these comments, i wonder what jakub will think 
+	// lets leave these comments, i wonder what jakub will think
 	// sure
 	// okay so what now
-    // i need to implement the damn logic for the damn second upgrade (damn)
+	// i need to implement the damn logic for the damn second upgrade (damn)
 	// damn bro
 	// i already did some stuff for you
-    // theres a shit ton of stuff here (also will i need to add each upgrade to the upgrade interface thing manually)
+	// theres a shit ton of stuff here (also will i need to add each upgrade to the upgrade interface thing manually)
 	// wdym "upgrade interface"
-    // follow me ok
-	
+	// follow me ok
+
 	//#endregion
 
 	//#region Utils
 	function clearPlayerData() {
-		localStorage.clear()
-		player = <Data>cloneObject(defaultData)
-		location.reload()
+		localStorage.clear();
+		player = <Data>cloneObject(defaultData);
+		location.reload();
 	}
 	/**
 	 * @deprecated use only if required
@@ -257,45 +275,48 @@
 
 	// console.debug(structuredClone(defaultData), defaultData)
 
-    let preTime = 0
-    let postTime = 0
-    const logicloop = () => {
-        preTime = player.time
-        player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber()
-        postTime = player.time
-        if(preTime != postTime) {
-            loops.restartLCLoop();
-        }
-	}
+	let preTime = 0;
+	let postTime = 0;
+	const logicloop = () => {
+		preTime = player.time;
+		player.time =
+			1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber();
+		postTime = player.time;
+		if (preTime != postTime) {
+			loops.restartLCLoop();
+		}
+	};
 
 	const lcloop = () => {
 		if (player.gold.lessThan(Decimal.dOne)) {
-			player.gold = Decimal.dOne
+			player.gold = Decimal.dOne;
 		}
-		player.mult = Decimal.dTwo.plus(upgrader.getUpgradeTimesBought("upgrademult"));
+		player.mult = Decimal.dTwo.plus(
+			upgrader.getUpgradeTimesBought("upgrademult"),
+		);
 		player.gold = player.gold.times(player.mult);
 		// console.log(getUpgradeCost("upgrademult"));
 		// console.log(getUpgradeTimesBought("upgrademult"));
-	}
+	};
 
 	const loops = {
-        logicLoop: 0,
+		logicLoop: 0,
 		lcLoop: 0,
 		autosaveLoop: 0,
-        restartLogicLoop: function() {
-			clearInterval(this.logicLoop)
-			this.logicLoop = setInterval(logicloop, 100)
+		restartLogicLoop: function () {
+			clearInterval(this.logicLoop);
+			this.logicLoop = setInterval(logicloop, 100);
 		},
-		restartLCLoop: function() {
-			clearInterval(this.lcLoop)
-			this.lcLoop = setInterval(lcloop, player.time)
+		restartLCLoop: function () {
+			clearInterval(this.lcLoop);
+			this.lcLoop = setInterval(lcloop, player.time);
 		},
-		restartAutosaveLoop: function() {
-			clearInterval(this.autosaveLoop)
+		restartAutosaveLoop: function () {
+			clearInterval(this.autosaveLoop);
 			setInterval(saveload.save, 10000);
-		}
-	}
-    loops.restartLogicLoop();
+		},
+	};
+	loops.restartLogicLoop();
 	loops.restartLCLoop();
 	loops.restartAutosaveLoop();
 	// we need to restart the loop every time `player.time` changes
@@ -315,18 +336,26 @@
 		<div id="left">
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
 
-            <div class="upgrade">
-                <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
-                    increase multiplier
-                </button>
-                <p>{upgrader.getUpgradeCost("upgrademult")}</p>
-            </div>
-			<div  class="upgrade">
-                <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
-                    decrease multiplication delay
-                </button>
-                <p>{upgrader.getUpgradeCost("upgradetime")}</p>
-            </div>
+			<div class="upgrade">
+				<button
+					on:click={() => {
+						upgrader.buyUpgrade("upgrademult");
+					}}
+				>
+					increase multiplier
+				</button>
+				<p>{upgrader.getUpgradeCost("upgrademult")}</p>
+			</div>
+			<div class="upgrade">
+				<button
+					on:click={() => {
+						upgrader.buyUpgrade("upgradetime");
+					}}
+				>
+					decrease multiplication delay
+				</button>
+				<p>{upgrader.getUpgradeCost("upgradetime")}</p>
+			</div>
 		</div>
 
 		<div id="right">
