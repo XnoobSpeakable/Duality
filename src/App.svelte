@@ -258,8 +258,15 @@
 
 	// console.debug(structuredClone(defaultData), defaultData)
 
+    let preTime = 0
+    let postTime = 0
     const logicloop = () => {
-        console.debug("test")
+        preTime = player.time
+        player.time = 1000 - getUpgradeTimesBought("upgradetime").toNumber()
+        postTime = player.time
+        if(preTime != postTime) {
+            loops.restartLCLoop();
+        }
 	}
 
 	const lcloop = () => {
