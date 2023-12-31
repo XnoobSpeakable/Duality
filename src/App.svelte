@@ -167,7 +167,7 @@
         upgradetime: {
 			cost: new Decimal(1e9),
 			currency: "gold",
-			scaleFunction: scaleLimited(new Decimal(3), 9), // TODO: change scaling function
+			scaleFunction: scaleLimited(new Decimal(3), 9),
 			timesBought: Decimal.dZero 
 		},
 	} as const satisfies Record<string, Upgrade>;
