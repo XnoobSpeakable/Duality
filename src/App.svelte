@@ -257,7 +257,7 @@
 	// console.debug(structuredClone(defaultData), defaultData)
 
     const logicloop = () => {
-        console.log("test")
+        console.debug("test")
 	}
 
 	const lcloop = () => {
