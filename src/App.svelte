@@ -162,11 +162,13 @@
 			cost: new Decimal(1024),
 			currency: "gold",
 			scaleFunction: scalePower(new Decimal(2)),
+			timesBought: Decimal.dZero
 		},
         upgradetime: {
 			cost: new Decimal(1e9),
 			currency: "gold",
 			scaleFunction: scaleLimited(new Decimal(3), 9), // TODO: change scaling function
+			timesBought: Decimal.dZero 
 		},
 	} as const satisfies Record<string, Upgrade>;
     // yo how do we switch to costFunction instead of scaleFunction
