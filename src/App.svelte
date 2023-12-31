@@ -1,4 +1,6 @@
 <script lang="ts">
+	console.debug('starting!!')
+
 	import "./app.css";
 	import Decimal from "break_eternity.js";
 	import {
@@ -58,7 +60,11 @@
 
 	let player: Data = cloneObject(defaultData);
 
+	console.debug('start code done')
+
 	//#region Saving/Loading
+
+	console.debug('save load utils loading')
 
 	Decimal.prototype.toJSON = function (): string {
 		return "D#" + this.toString();
@@ -123,9 +129,13 @@
 		},
 	};
 
+	console.debug('save load utils loading done')
+
 	//#endregion
 
 	//#region Upgrades
+
+	console.debug('loading upgrades')
 
 	const upgrader = {
 		/**
@@ -217,7 +227,7 @@
 			timesBought: Decimal.dZero,
 		},
 	} as const satisfies Record<string, Upgrade>;
-	// yo how do we switch to costFunction instead of scaleFunction
+	/* yo how do we switch to costFunction instead of scaleFunction
 	// oh
 	// waait wait what are you trying to do
 	// instead of having a seperate scaleFunction that we call on each buy,
@@ -240,11 +250,14 @@
 	// i already did some stuff for you
 	// theres a shit ton of stuff here (also will i need to add each upgrade to the upgrade interface thing manually)
 	// wdym "upgrade interface"
-	// follow me ok
+	follow me ok */
+
+	console.debug('finished loading upgrades')
 
 	//#endregion
 
 	//#region Utils
+	console.debug('loading utils')
 	function clearPlayerData() {
 		localStorage.clear();
 		player = <Data>cloneObject(defaultData);
@@ -267,26 +280,18 @@
 
 	//#region Pre-initialize
 
+	console.debug('pre init (load save data)')
+
 	saveload.load();
 
 	//#endregion
 
 	//#region Initialize
 
-	// console.debug(structuredClone(defaultData), defaultData)
+	console.debug('init (start loops)')
 
-	let preTime = 0;
-	let postTime = 0;
 	const logicloop = () => { // no fucking clue what this means
-		// seems very smart
-		// i think
-		preTime = player.time;
-		player.time =
-			1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber();
-		postTime = player.time;
-		if (preTime != postTime) {
-			loops.restartLCLoop();
-		}
+		console.debug('logic tick')
 	};
 
 	const lcloop = () => {
@@ -297,39 +302,21 @@
 			upgrader.getUpgradeTimesBought("upgrademult"),
 		);
 		player.gold = player.gold.times(player.mult);
-		// console.log(getUpgradeCost("upgrademult"));
-		// console.log(getUpgradeTimesBought("upgrademult"));
 	};
 
 	const loops = {
 		logicLoop: 0,
-		lcLoop: 0,
-		autosaveLoop: 0,
 		restartLogicLoop: function () {
 			clearInterval(this.logicLoop);
 			this.logicLoop = setInterval(logicloop, 100);
-		},
-		restartLCLoop: function () {
-			clearInterval(this.lcLoop);
-			this.lcLoop = setInterval(lcloop, player.time);
-		},
-		restartAutosaveLoop: function () {
-			clearInterval(this.autosaveLoop); // oh sh*t wait i forgot to set it here lmfao
-			setInterval(saveload.save, 10000);
-		}, //did u see the logic loop solution i did to  figure out when player.time changes 
+		}
 	};
 	loops.restartLogicLoop();
-	loops.restartLCLoop();
-	loops.restartAutosaveLoop();
-	
-	// lmfao
-	setInterval(() => {
-		if (!player.settings.autosaveEnabled) {
-			return;
-		}
-		saveload.save();
-	}, 5000);
 
+	(function lcloop_() { lcloop(); setTimeout(lcloop_, player.time) })()
+	
+	setInterval(() => player.settings.autosaveEnabled ? saveload.save() : null, 5000);
+	
 	//#endregion
 </script>
 

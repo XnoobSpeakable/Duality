@@ -17,12 +17,16 @@ export interface Upgrade {
     // so why isnt it in the interface
     //well, its in the player data upgrades section but not in the actual upgrades section which hollds the scalefunctions n stuff
 }
-export interface Data { // ho i frotgo lhod no
+interface Settings {
+    autosaveEnabled: boolean;
+}
+
+export interface Data {
     upgrades: Record<string, Upgrade>,
     mult: Decimal,
     gold: Decimal,
     time: number,
-    settings: object
+    settings: Settings
 }
 
 export const defaultData = {
@@ -39,7 +43,9 @@ export const defaultData = {
     mult: Decimal.dTwo,
     gold: Decimal.dOne,
     time: 1000,
-    settings: {} // TODO: add settings page
+    settings: {
+        autosaveEnabled: true
+    } // TODO: add settings page
 }
 export type UpgradeName = keyof typeof defaultData.upgrades
 export const UpgradeNames = Object.keys(defaultData.upgrades) as UpgradeName[];
