@@ -1,27 +1,18 @@
-
 main {
-    /* text-align: center; */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     flex-direction: column;
 }
-aside {
-    position: fixed;
-    left: 24px;
-    top: 24px;
-    transition: 0.25s ease-in-out background;
-    padding: 12px;
-    border-radius: 12px;
-    cursor: default;
-}
-aside:hover {
-    background: rgba(255,255,255,0.1)
-}
-aside > * {
-    display: inline;
-}
+/* note: removed aside because main menu doesnt exist now */
 button {
     font-family: inherit;
+}
+/* note: stop using inline styles */
+section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 200px;
 }
