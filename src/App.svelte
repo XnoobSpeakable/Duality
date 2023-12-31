@@ -111,7 +111,10 @@
 		if (save === null) return;
 		mergeRecursive(
 			player,
-			JSON.parse(save.startsWith("{") ? save : atob(save), deserializeDecimal),
+			JSON.parse(
+				save.startsWith("{") ? save : atob(save),
+				deserializeDecimal,
+			),
 		);
 	}
 
@@ -123,7 +126,7 @@
 		const savefile = btoa(JSON.stringify(player, saveReplace));
 		localStorage.setItem(location.pathname, savefile);
 	}
-	
+
 	//#endregion
 
 	//#region Upgrades
@@ -207,7 +210,7 @@
 	};
 
 	type CurrencyName = keyof typeof currencyNames;
-	
+
 	// no idea what this is
 	function scalePower(power: Decimal): (upgradeName: UpgradeName) => void {
 		return function (upgradeName: UpgradeName): void {
@@ -234,6 +237,7 @@
 
 	//#endregion
 </script>
+
 <!-- we dont need font awesome for now -->
 <!-- <svelte:head>
 	<script
@@ -244,14 +248,14 @@
 <main>
 	<section>
 		<div id="left">
-			<div>{format.big(player.gold)}</div>
+			<p>{format.big(player.gold)} {currencyNames.gold}</p>
 			<button on:click={buyUpgrade("upgrademult")}
 				>increase multiplier</button
 			>
-			<div>{getUpgradeCost("upgrademult")}</div>
+			<p>{getUpgradeCost("upgrademult")}</p>
 		</div>
 		<div id="right">
-			<div>0 clicks</div>
+			<p>0 clicks</p>
 			<button>click</button>
 		</div>
 	</section>
