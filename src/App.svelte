@@ -123,52 +123,79 @@
 
 	//#region Upgrades
 
-	/**
-	 * @returns Whether or not the given value is the name of one of the
-	 * upgrades.
-	 */
-	function isUpgradeName(x: unknown): x is UpgradeName {
-		return typeof x === "string" && x in player.upgrades;
-	}
+	const upgrader = {
+		/**
+		 * @returns Whether or not the given value is the name of one of the
+		 * upgrades.
+		 */
+		isUpgradeName: function(x: unknown): x is UpgradeName {
+			return typeof x === "string" && x in player.upgrades;
+		},
+		/**
+		 * A utility function to get the current cost of an upgrade.
+		 * @param upgradeName The name of the upgrade.
+		 * @returns The cost of the given upgrade.
+		 */
+		getUpgradeCost: function(upgradeName: UpgradeName): Decimal {
+			return player.upgrades[upgradeName].cost;
+		},
+		/**
+		 * A utility function to change the cost of an upgade.
+		 * @param upgradeName The name of the upgrade.
+		 * @param newCost The new cost of the given upgrade.
+		 */
+		setUpgradeCost: function(upgradeName: UpgradeName, newCost: Decimal): void {
+			player.upgrades[upgradeName].cost = newCost;
+		},
+		/**
+		 * A utility function to get the current level of an upgrade.
+		 * @param upgradeName The name of the upgrade.
+		 * @returns The current level of the given upgrade.
+		 */
+		getUpgradeTimesBought: function(upgradeName: UpgradeName): Decimal {
+			return player.upgrades[upgradeName].timesBought;
+		},
+		buyUpgrade: function(upgradeName: UpgradeName): void {
+			const upgrade = upgrades[upgradeName];
+			const oldCost = this.getUpgradeCost(upgradeName);
 
-	/**
-	 * A utility function to get the current cost of an upgrade.
-	 * @param upgradeName The name of the upgrade.
-	 * @returns The cost of the given upgrade.
-	 */
-	function getUpgradeCost(upgradeName: UpgradeName): Decimal {
-		return player.upgrades[upgradeName].cost;
-	}
-
-	/**
-	 * A utility function to change the cost of an upgade.
-	 * @param upgradeName The name of the upgrade.
-	 * @param newCost The new cost of the given upgrade.
-	 */
-	function setUpgradeCost(upgradeName: UpgradeName, newCost: Decimal): void {
-		player.upgrades[upgradeName].cost = newCost;
-	}
-
-	/**
-	 * A utility function to get the current level of an upgrade.
-	 * @param upgradeName The name of the upgrade.
-	 * @returns The current level of the given upgrade.
-	 */
-	function getUpgradeTimesBought(upgradeName: UpgradeName): Decimal {
-		return player.upgrades[upgradeName].timesBought;
+			if (player[upgrade.currency].gte(oldCost)) {
+				player.upgrades[upgradeName].timesBought = player.upgrades[
+					upgradeName
+				].timesBought.plus(Decimal.dOne);
+				player[upgrade.currency] = player[upgrade.currency].div(oldCost);
+				upgrade.scaleFunction(upgradeName);
+			}
+		},
+		// upgrade scaling function. After buy, raises costs to a power.
+		scalePower: function(power: Decimal): (upgradeName: UpgradeName) => void {
+			return function (upgradeName: UpgradeName): void {
+				upgrader.setUpgradeCost(upgradeName, upgrader.getUpgradeCost(upgradeName).pow(power));
+			};
+		},
+		scaleLimited: function (power: Decimal, maxBuys: number): (upgradeName: UpgradeName) => void {
+			return function (upgradeName: UpgradeName): void {
+				if(upgrader.getUpgradeTimesBought(upgradeName).lte(maxBuys)) {
+					upgrader.setUpgradeCost(upgradeName, upgrader.getUpgradeCost(upgradeName).pow(power));
+				}
+				else {
+					upgrader.setUpgradeCost(upgradeName, Decimal.dInf);
+				}
+			};
+		}
 	}
 
 	const upgrades = {
 		upgrademult: {
 			cost: new Decimal(1024),
 			currency: "gold",
-			scaleFunction: scalePower(new Decimal(2)),
+			scaleFunction: upgrader.scalePower(new Decimal(2)),
 			timesBought: Decimal.dZero
 		},
         upgradetime: {
 			cost: new Decimal(1e9),
 			currency: "gold",
-			scaleFunction: scaleLimited(new Decimal(3), 9),
+			scaleFunction: upgrader.scaleLimited(new Decimal(3), 9),
 			timesBought: Decimal.dZero 
 		},
 	} as const satisfies Record<string, Upgrade>;
@@ -196,18 +223,7 @@
     // theres a shit ton of stuff here (also will i need to add each upgrade to the upgrade interface thing manually)
 	// wdym "upgrade interface"
     // follow me ok
-	function buyUpgrade(upgradeName: UpgradeName): void {
-		const upgrade = upgrades[upgradeName];
-		const oldCost = getUpgradeCost(upgradeName);
-
-		if (player[upgrade.currency].gte(oldCost)) {
-			player.upgrades[upgradeName].timesBought = player.upgrades[
-				upgradeName
-			].timesBought.plus(Decimal.dOne);
-			player[upgrade.currency] = player[upgrade.currency].div(oldCost);
-			upgrade.scaleFunction(upgradeName);
-		}
-	}
+	
 	//#endregion
 
 	//#region Utils
@@ -235,24 +251,6 @@
 
 	saveload.load();
 
-	// upgrade scaling function. After buy, raises costs to a power.
-	function scalePower(power: Decimal): (upgradeName: UpgradeName) => void {
-		return function (upgradeName: UpgradeName): void {
-			setUpgradeCost(upgradeName, getUpgradeCost(upgradeName).pow(power));
-		};
-	}
-
-    function scaleLimited(power: Decimal, maxBuys: number): (upgradeName: UpgradeName) => void {
-		return function (upgradeName: UpgradeName): void {
-            if(getUpgradeTimesBought(upgradeName).lte(maxBuys)) {
-                setUpgradeCost(upgradeName, getUpgradeCost(upgradeName).pow(power));
-            }
-            else {
-                setUpgradeCost(upgradeName, Decimal.dInf);
-            }
-		};
-	}
-
 	//#endregion
 
 	//#region Initialize
@@ -274,7 +272,7 @@
 		if (player.gold.lessThan(Decimal.dOne)) {
 			player.gold = Decimal.dOne
 		}
-		player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"));
+		player.mult = Decimal.dTwo.plus(upgrader.getUpgradeTimesBought("upgrademult"));
 		player.gold = player.gold.times(player.mult);
 		// console.log(getUpgradeCost("upgrademult"));
 		// console.log(getUpgradeTimesBought("upgrademult"));
@@ -318,17 +316,17 @@
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
 
             <div class="upgrade">
-                <button on:click={() => {buyUpgrade("upgrademult")}}>
+                <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
                     increase multiplier
                 </button>
-                <p>Cost: {getUpgradeCost("upgrademult")} {upgrades.upgrademult.currency}</p>
+                <p>Cost: {upgrader.getUpgradeCost("upgrademult")} {upgrades.upgrademult.currency}</p>
             </div>
             <br>
 			<div class="upgrade">
-                <button on:click={() => {buyUpgrade("upgradetime")}}>
+                <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
                     decrease multiplication delay
                 </button>
-                <p>Cost: {getUpgradeCost("upgradetime")} {upgrades.upgradetime.currency}</p>
+                <p>Cost: {upgrader.getUpgradeCost("upgradetime")} {upgrades.upgradetime.currency}</p>
             </div>
 		</div>
 
