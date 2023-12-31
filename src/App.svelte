@@ -58,65 +58,66 @@
 		return "D#" + this.toString();
 	};
 
-	/**
-	 * A utility function used when deserializing the player object, used to
-	 * handle Decimal values.
-	 */
-	function deserializeDecimal(_key: string, value: unknown): unknown {
-		return typeof value === "string" && value.startsWith("D#")
-			? new Decimal(value.slice(2))
-			: value;
-	}
-
-	/**
-	 * Recursively merge two objects.
-	 * @param source The object to which copy the property values from the
-	 * other object.
-	 * @param data The object from which to copy property values.
-	 */
-	function mergeRecursive<T extends object>(source: T, data: T): void {
-		for (const key in data) {
-			const value = data[key];
-			if (
-				typeof value === "object" &&
-				value !== null &&
-				!(value instanceof Decimal)
-			) {
-				const newSource = source[key];
-				if (!(key in source)) {
-					// @ts-expect-error uhh how do I convince TS this is fine?
-					source[key] = Array.isArray(value) ? [] : {};
-				}
-				if (typeof newSource === "object" && newSource !== null) {
-					mergeRecursive(newSource, value);
-				}
-			} else source[key] = value;
+	const saveload = {
+		/**
+		 * A utility function used when deserializing the player object, used to
+		 * handle Decimal values.
+		 */
+		deserializeDecimal: function(_key: string, value: unknown): unknown {
+			return typeof value === "string" && value.startsWith("D#")
+				? new Decimal(value.slice(2))
+				: value;
+		},
+		/**
+		 * Recursively merge two objects.
+		 * @param source The object to which copy the property values from the
+		 * other object.
+		 * @param data The object from which to copy property values.
+		 */
+		 mergeRecursive: function<T extends object>(source: T, data: T): void {
+			for (const key in data) {
+				const value = data[key];
+				if (
+					typeof value === "object" &&
+					value !== null &&
+					!(value instanceof Decimal)
+				) {
+					const newSource = source[key];
+					if (!(key in source)) {
+						// @ts-expect-error uhh how do I convince TS this is fine?
+						source[key] = Array.isArray(value) ? [] : {};
+					}
+					if (typeof newSource === "object" && newSource !== null) {
+						this.mergeRecursive(newSource, value);
+					}
+				} else source[key] = value;
+			}
+		},
+		/**
+		 * Loads the player save from localStorage, if one exists.
+		 */
+		load: function(): void {
+			const save = localStorage.getItem(location.pathname);
+			if (save === null) return;
+			this.mergeRecursive(
+				player,
+				JSON.parse(
+					save.startsWith("{") ? save : atob(save),
+					this.deserializeDecimal,
+				),
+			);
+		},
+		saveReplace: function(_key: string, value: unknown): unknown {
+			if (value instanceof Decimal) return "D#" + value.toString();
+			return value;
+		},
+		save: function() {
+			const savefile = btoa(JSON.stringify(player, this.saveReplace));
+			localStorage.setItem(location.pathname, savefile);
 		}
 	}
 
-	/**
-	 * Loads the player save from localStorage, if one exists.
-	 */
-	function load(): void {
-		const save = localStorage.getItem(location.pathname);
-		if (save === null) return;
-		mergeRecursive(
-			player,
-			JSON.parse(
-				save.startsWith("{") ? save : atob(save),
-				deserializeDecimal,
-			),
-		);
-	}
-
-	function saveReplace(_key: string, value: unknown): unknown {
-		if (value instanceof Decimal) return "D#" + value.toString();
-		return value;
-	}
-	function save() {
-		const savefile = btoa(JSON.stringify(player, saveReplace));
-		localStorage.setItem(location.pathname, savefile);
-	}
+	
 
 	//#endregion
 
@@ -232,7 +233,7 @@
 
 	//#region Pre-initialize
 
-	load();
+	saveload.load();
 
 	// upgrade scaling function. After buy, raises costs to a power.
 	function scalePower(power: Decimal): (upgradeName: UpgradeName) => void {
@@ -293,9 +294,7 @@
 		},
 		restartAutosaveLoop: function() {
 			clearInterval(this.autosaveLoop)
-			setInterval(() => {
-				save();
-			}, 10000);
+			setInterval(saveload.save, 10000);
 		}
 	}
     loops.restartLogicLoop();
