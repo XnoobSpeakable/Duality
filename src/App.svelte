@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "./app.css";
 	import Decimal from "break_eternity.js";
+    import { defaultData, type Data } from "./export";
 
 	const format = {
 		decimalPlaces: function (
@@ -49,18 +50,7 @@
 		},
 	};
 
-	let player = {
-		upgrades: {
-			upgrademult: {
-				cost: new Decimal(1024),
-				timesBought: Decimal.dZero,
-			},
-		},
-		mult: Decimal.dTwo,
-		gold: Decimal.dOne,
-		time: 1000,
-		settings: {} // TODO: add settings page
-	};
+	let player: Data = cloneObject(defaultData);
 
 	//#region Saving/Loading
 
@@ -202,6 +192,27 @@
 	}
 	//#endregion
 
+	//#region Utils
+	function clearPlayerData() {
+		localStorage.clear()
+		player = <Data>structuredClone(defaultData)
+		location.reload()
+	}
+	/**
+	 * @deprecated use only if required
+	 * @param obj
+	 */
+	function cloneObject(obj: Object) {
+		if (null == obj || "object" != typeof obj) return obj;
+		var copy = obj.constructor();
+		for (var attr in obj) {
+			//@ts-expect-error idk why it errors
+			if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+		}
+		return copy;
+	}
+	//#endregion
+
 	//#region Pre-initialize
 
 	load();
@@ -223,7 +234,12 @@
 
 	//#region Initialize
 
+	// console.debug(structuredClone(defaultData), defaultData)
+
 	const lcloop = () => {
+		if (player.gold.lessThan(Decimal.dOne)) {
+			player.gold = Decimal.dOne
+		}
 		player.mult = Decimal.dTwo.plus(getUpgradeTimesBought("upgrademult"));
 		player.gold = player.gold.times(player.mult);
 		// console.log(getUpgradeCost("upgrademult"));
@@ -262,7 +278,7 @@
 	<section>
 		<div id="left">
 			<p>{format.big(player.gold)} {currencyNames.gold}</p>
-			<button on:click={buyUpgrade("upgrademult")}
+			<button on:click={() => {buyUpgrade("upgrademult")}}
 				>increase multiplier</button
 			>
 			<p>{getUpgradeCost("upgrademult")}</p>
@@ -273,3 +289,4 @@
 		</div>
 	</section>
 </main>
+<button on:click={clearPlayerData}>Clear data</button>
