@@ -292,6 +292,7 @@
 
 	const logicloop = () => { // no fucking clue what this means
 		console.debug('logic tick')
+		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber()
 	};
 
 	const lcloop = () => {
