@@ -337,14 +337,14 @@
                 <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
                     increase multiplier
                 </button>
-                <p>Cost: {upgrader.getUpgradeCost("upgrademult")} {upgrades.upgrademult.currency}</p>
+                <p>Cost: {format.big(upgrader.getUpgradeCost("upgrademult"))} {upgrades.upgrademult.currency}</p>
             </div>
             <br>
 			<div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
                     decrease multiplication delay
                 </button>
-                <p>Cost: {upgrader.getUpgradeCost("upgradetime")} {upgrades.upgradetime.currency}</p>
+                <p>Cost: {format.big(upgrader.getUpgradeCost("upgradetime"))} {upgrades.upgradetime.currency}</p>
             </div>
 		</div>
 
