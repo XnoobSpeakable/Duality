@@ -290,9 +290,10 @@
 
 	console.debug('init (start loops)')
 
+
 	const logicloop = () => { // no fucking clue what this means
 		console.debug('logic tick')
-		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber()
+		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber() ///how tf does upgrader.getUpgradeTimesBought("upgradetime").toNumber() not change, it should not always be 0
 	};
 
 	const lcloop = () => {
