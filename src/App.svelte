@@ -292,7 +292,7 @@
 
 
 	const logicloop = () => { // no fucking clue what this means
-		console.debug('logic tick')
+		console.debug('logic tick') //if i put a breakpoint in this loop, ach time i step forward i see two "logic ticks" somehow, wtf.
 		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber() ///how tf does upgrader.getUpgradeTimesBought("upgradetime").toNumber() not change, it should not always be 0
 	};
 
