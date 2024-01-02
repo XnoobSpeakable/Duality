@@ -367,7 +367,7 @@
 		<div id="right">
 			<p>{format.big(player.diamonds)} {currencyNames.diamonds}</p>
 			<button on:click={() => {click()}}>click</button>
-
+			<br><br>
 			<div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgradeclickmult")}}>
                     increase click multiplier
