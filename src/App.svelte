@@ -353,14 +353,14 @@
                 <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
                     increase multiplier
                 </button>
-                <p>Cost: {format.big(upgrader.getUpgradeCost("upgrademult"))} {upgrades.upgrademult.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgrademult.cost)} {upgrades.upgrademult.currency}</p>
             </div>
             <br>
 			<div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
                     decrease multiplication delay
                 </button>
-                <p>Cost: {format.big(upgrader.getUpgradeCost("upgradetime"))} {upgrades.upgradetime.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgradetime.cost)} {upgrades.upgradetime.currency}</p>
             </div>
 		</div>
 
@@ -372,7 +372,7 @@
                 <button on:click={() => {upgrader.buyUpgrade("upgradeclickmult")}}>
                     increase click multiplier
                 </button>
-                <p>Cost: {format.big(upgrader.getUpgradeCost("upgradeclickmult"))} {upgrades.upgradeclickmult.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgradeclickmult.cost)} {upgrades.upgradeclickmult.currency}</p>
             </div>
             <br>
 		</div>
