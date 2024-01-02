@@ -226,6 +226,12 @@
 			scaleFunction: upgrader.scaleLimited(new Decimal(3), 9),
 			timesBought: Decimal.dZero,
 		},
+		upgradeclickmult: {
+			cost: new Decimal(16384),
+			currency: "diamonds",
+			scaleFunction: upgrader.scalePower(new Decimal(1.6)),
+			timesBought: Decimal.dZero,
+		},
 	} as const satisfies Record<string, Upgrade>;
 	/* yo how do we switch to costFunction instead of scaleFunction
 	// oh
@@ -291,8 +297,7 @@
 	console.debug('init (start loops)')
 
 
-	const logicloop = () => { // no fucking clue what this means
-		console.debug('logic tick') 
+	const logicloop = () => {
 		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber() * 100
 	};
 
@@ -304,6 +309,12 @@
 			upgrader.getUpgradeTimesBought("upgrademult"),
 		);
 		player.gold = player.gold.times(player.mult);
+		player.mult = Decimal.dTwo.plus(
+			upgrader.getUpgradeTimesBought("upgrademult"),
+		);
+		player.clickMult = Decimal.dTwo.plus(
+			upgrader.getUpgradeTimesBought("upgradeclickmult")
+		);
 	};
 
 	const loops = {

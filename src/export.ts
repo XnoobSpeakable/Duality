@@ -42,6 +42,10 @@ export const defaultData = {
             cost: new Decimal(1e9),
             timesBought: Decimal.dZero,
         },
+        upgradeclickmult: {
+            cost: new Decimal(16384),
+            timesBought: Decimal.dZero,
+        },
     },
     mult: Decimal.dTwo,
     gold: Decimal.dOne,
