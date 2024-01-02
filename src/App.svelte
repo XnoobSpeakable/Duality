@@ -367,6 +367,14 @@
 		<div id="right">
 			<p>{format.big(player.diamonds)} {currencyNames.diamonds}</p>
 			<button on:click={() => {click()}}>click</button>
+
+			<div class="upgrade">
+                <button on:click={() => {upgrader.buyUpgrade("upgradeclickmult")}}>
+                    increase click multiplier
+                </button>
+                <p>Cost: {format.big(upgrader.getUpgradeCost("upgradeclickmult"))} {upgrades.upgradeclickmult.currency}</p>
+            </div>
+            <br>
 		</div>
 	</section>
 </main>
