@@ -216,19 +216,19 @@
 	const upgrades = {
 		upgrademult: {
 			cost: new Decimal(1024),
-			currency: "gold",
+			currency: "leftCurr",
 			scaleFunction: upgrader.scalePower(new Decimal(2)),
 			timesBought: Decimal.dZero,
 		},
 		upgradetime: {
 			cost: new Decimal(1e9),
-			currency: "gold",
+			currency: "leftCurr",
 			scaleFunction: upgrader.scaleLimited(new Decimal(3), 9),
 			timesBought: Decimal.dZero,
 		},
 		upgradeclickmult: {
 			cost: new Decimal(16384),
-			currency: "diamonds",
+			currency: "rightCurr",
 			scaleFunction: upgrader.scalePower(new Decimal(1.6)),
 			timesBought: Decimal.dZero,
 		},
@@ -302,13 +302,13 @@
 	};
 
 	const lcloop = () => {
-		if (player.gold.lessThan(Decimal.dOne)) {
-			player.gold = Decimal.dOne;
+		if (player.leftCurr.lessThan(Decimal.dOne)) {
+			player.leftCurr = Decimal.dOne;
 		}
 		player.mult = Decimal.dTwo.plus(
 			upgrader.getUpgradeTimesBought("upgrademult"),
 		);
-		player.gold = player.gold.times(player.mult);
+		player.leftCurr = player.leftCurr.times(player.mult);
 		player.mult = Decimal.dTwo.plus(
 			upgrader.getUpgradeTimesBought("upgrademult"),
 		);
@@ -331,7 +331,7 @@
 	setInterval(() => player.settings.autosaveEnabled ? saveload.save() : null, 5000);
 
 	function click() {
-		player.diamonds = player.diamonds.times(player.clickMult)
+		player.rightCurr = player.rightCurr.times(player.clickMult)
 	}
 	
 	//#endregion
@@ -347,32 +347,32 @@
 <main>
 	<section>
 		<div id="left">
-			<p>{format.big(player.gold)} {currencyNames.gold}</p>
+			<p>{format.big(player.leftCurr)} {currencyNames.leftCurr}</p>
 
             <div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgrademult")}}>
                     increase multiplier
                 </button>
-                <p>Cost: {format.big(player.upgrades.upgrademult.cost)} {upgrades.upgrademult.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgrademult.cost)} {currencyNames[upgrades.upgrademult.currency]}</p>
             </div>
             <br>
 			<div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgradetime")}}>
                     decrease multiplication delay
                 </button>
-                <p>Cost: {format.big(player.upgrades.upgradetime.cost)} {upgrades.upgradetime.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgradetime.cost)} {currencyNames[upgrades.upgradetime.currency]}</p>
             </div>
 		</div>
 
 		<div id="right">
-			<p>{format.big(player.diamonds)} {currencyNames.diamonds}</p>
+			<p>{format.big(player.rightCurr)} {currencyNames.rightCurr}</p>
 			<button on:click={() => {click()}}>click</button>
 			<br><br>
 			<div class="upgrade">
                 <button on:click={() => {upgrader.buyUpgrade("upgradeclickmult")}}>
                     increase click multiplier
                 </button>
-                <p>Cost: {format.big(player.upgrades.upgradeclickmult.cost)} {upgrades.upgradeclickmult.currency}</p>
+                <p>Cost: {format.big(player.upgrades.upgradeclickmult.cost)} {currencyNames[upgrades.upgradeclickmult.currency]}</p>
             </div>
             <br>
 		</div>

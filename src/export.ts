@@ -1,8 +1,8 @@
 import Decimal from "break_eternity.js";
 
 export const currencyNames = {
-    gold: "gold",
-    diamonds: "diamonds"
+    leftCurr: "time",
+    rightCurr: "space"
 };
 
 export type CurrencyName = keyof typeof currencyNames;
@@ -25,10 +25,10 @@ interface Settings {
 export interface Data {
     upgrades: Record<string, Upgrade>,
     mult: Decimal,
-    gold: Decimal,
+    leftCurr: Decimal,
     time: number,
     settings: Settings,
-    diamonds: Decimal,
+    rightCurr: Decimal,
     clickMult: Decimal
 }
 
@@ -48,12 +48,12 @@ export const defaultData = {
         },
     },
     mult: Decimal.dTwo,
-    gold: Decimal.dOne,
+    leftCurr: Decimal.dOne,
     time: 1000,
     settings: {
         autosaveEnabled: true
     }, // TODO: add settings page
-    diamonds: Decimal.dOne,
+    rightCurr: Decimal.dOne,
     clickMult: Decimal.dTwo
 }
 export type UpgradeName = keyof typeof defaultData.upgrades
