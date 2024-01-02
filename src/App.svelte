@@ -301,20 +301,15 @@
 		player.time = 1000 - upgrader.getUpgradeTimesBought("upgradetime").toNumber() * 100
 	};
 
-	const lcloop = () => {
+	const leftCurrLoop = () => {
 		if (player.leftCurr.lessThan(Decimal.dOne)) {
 			player.leftCurr = Decimal.dOne;
 		}
-		player.mult = Decimal.dTwo.plus(
-			upgrader.getUpgradeTimesBought("upgrademult"),
+		const mult = Decimal.dTwo.plus(
+			upgrader.getUpgradeTimesBought("upgrademult")
 		);
-		player.leftCurr = player.leftCurr.times(player.mult);
-		player.mult = Decimal.dTwo.plus(
-			upgrader.getUpgradeTimesBought("upgrademult"),
-		);
-		player.clickMult = Decimal.dTwo.plus(
-			upgrader.getUpgradeTimesBought("upgradeclickmult")
-		);
+		player.leftCurr = player.leftCurr.times(mult);
+		
 	};
 
 	const loops = {
@@ -326,12 +321,20 @@
 	};
 	loops.restartLogicLoop();
 
-	(function lcloop_() { lcloop(); setTimeout(lcloop_, player.time) })()
+	(function leftCurrLoop_() { leftCurrLoop(); setTimeout(leftCurrLoop_, player.time) })()
 	
 	setInterval(() => player.settings.autosaveEnabled ? saveload.save() : null, 5000);
 
 	function click() {
-		player.rightCurr = player.rightCurr.times(player.clickMult)
+		const clicksPerClick = Decimal.dOne;
+
+		player.totalClicks = player.totalClicks.plus(clicksPerClick);
+		
+		const clickMult = (Decimal.dTwo.plus(
+			upgrader.getUpgradeTimesBought("upgradeclickmult")
+		)).pow(clicksPerClick);
+		
+		player.rightCurr = player.rightCurr.times(clickMult)
 	}
 	
 	//#endregion

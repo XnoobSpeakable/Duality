@@ -24,12 +24,11 @@ interface Settings {
 
 export interface Data {
     upgrades: Record<string, Upgrade>,
-    mult: Decimal,
     leftCurr: Decimal,
     time: number,
     settings: Settings,
     rightCurr: Decimal,
-    clickMult: Decimal
+    totalClicks: Decimal
 }
 
 export const defaultData = {
@@ -47,14 +46,13 @@ export const defaultData = {
             timesBought: Decimal.dZero,
         },
     },
-    mult: Decimal.dTwo,
     leftCurr: Decimal.dOne,
     time: 1000,
     settings: {
         autosaveEnabled: true
     }, // TODO: add settings page
     rightCurr: Decimal.dOne,
-    clickMult: Decimal.dTwo
+    totalClicks: Decimal.dZero
 }
 export type UpgradeName = keyof typeof defaultData.upgrades
 export const UpgradeNames = Object.keys(defaultData.upgrades) as UpgradeName[];
