@@ -2,6 +2,7 @@ import Decimal from "break_eternity.js";
 
 export const currencyNames = {
     gold: "gold",
+    diamonds: "diamonds"
 };
 
 export type CurrencyName = keyof typeof currencyNames;
@@ -26,7 +27,9 @@ export interface Data {
     mult: Decimal,
     gold: Decimal,
     time: number,
-    settings: Settings
+    settings: Settings,
+    diamonds: Decimal,
+    clickMult: Decimal
 }
 
 export const defaultData = {
@@ -45,7 +48,9 @@ export const defaultData = {
     time: 1000,
     settings: {
         autosaveEnabled: true
-    } // TODO: add settings page
+    }, // TODO: add settings page
+    diamonds: Decimal.dOne,
+    clickMult: Decimal.dTwo
 }
 export type UpgradeName = keyof typeof defaultData.upgrades
 export const UpgradeNames = Object.keys(defaultData.upgrades) as UpgradeName[];

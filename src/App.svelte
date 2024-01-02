@@ -318,6 +318,10 @@
 	(function lcloop_() { lcloop(); setTimeout(lcloop_, player.time) })()
 	
 	setInterval(() => player.settings.autosaveEnabled ? saveload.save() : null, 5000);
+
+	function click() {
+		player.diamonds = player.diamonds.times(player.clickMult)
+	}
 	
 	//#endregion
 </script>
@@ -350,8 +354,8 @@
 		</div>
 
 		<div id="right">
-			<p>0 clicks</p>
-			<button>click</button>
+			<p>{format.big(player.diamonds)} {currencyNames.diamonds}</p>
+			<button on:click={() => {click()}}>click</button>
 		</div>
 	</section>
 </main>
