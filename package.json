@@ -1,19 +1,19 @@
 {
-  "name": "duality",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
-  },
-  "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.0.1",
-    "@tsconfig/svelte": "^5.0.2"
-  },
-  "dependencies": {
-    "break_eternity.js": "^1.4.0"
-  }
+    "name": "duality",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-check"
+    },
+    "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^3.0.1",
+        "@tsconfig/svelte": "^5.0.2"
+    },
+    "dependencies": {
+        "break_eternity.js": "^1.4.0"
+    }
 }

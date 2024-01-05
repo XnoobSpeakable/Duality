@@ -23,28 +23,28 @@ interface Settings {
 }
 
 export interface Data {
-    upgrades: Record<string, Upgrade>,
-    leftCurr: Decimal,
-    time: number,
-    settings: Settings,
-    rightCurr: Decimal,
-    totalClicks: Decimal
+    upgrades: Record<string, Upgrade>;
+    leftCurr: Decimal;
+    time: number;
+    settings: Settings;
+    rightCurr: Decimal;
+    totalClicks: Decimal;
 }
 
 export const defaultData = {
     upgrades: {
         upgrademult: {
             cost: new Decimal(1024),
-            timesBought: Decimal.dZero,
+            timesBought: Decimal.dZero
         },
         upgradetime: {
             cost: new Decimal(1e9),
-            timesBought: Decimal.dZero,
+            timesBought: Decimal.dZero
         },
         upgradeclickmult: {
             cost: new Decimal(16384),
-            timesBought: Decimal.dZero,
-        },
+            timesBought: Decimal.dZero
+        }
     },
     leftCurr: Decimal.dOne,
     time: 1000,
@@ -53,6 +53,6 @@ export const defaultData = {
     }, // TODO: add settings page
     rightCurr: Decimal.dOne,
     totalClicks: Decimal.dZero
-}
-export type UpgradeName = keyof typeof defaultData.upgrades
+};
+export type UpgradeName = keyof typeof defaultData.upgrades;
 export const UpgradeNames = Object.keys(defaultData.upgrades) as UpgradeName[];
