@@ -10,8 +10,7 @@
         "check": "svelte-check"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^3.0.1",
-        "@tsconfig/svelte": "^5.0.2"
+        "@sveltejs/vite-plugin-svelte": "^3.0.1"
     },
     "dependencies": {
         "break_eternity.js": "^1.4.0"
